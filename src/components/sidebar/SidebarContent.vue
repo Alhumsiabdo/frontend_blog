@@ -13,6 +13,16 @@
                 <DashboardIcon class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
             </template>
         </SidebarLink>
+
+        <SidebarLink
+            title="Admins"
+            :to="{ name: 'Admin' }"
+            :active="isCurrentRoute('Admin')"
+        >
+            <template #icon>
+                <AdminIcon class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+            </template>
+        </SidebarLink>
         
         <SidebarLink
             title="Categories"
@@ -53,8 +63,7 @@
 import { useRouter } from 'vue-router'
 import PerfrectScrollbar from '@/components/PerfectScrollbar.vue'
 import SidebarLink from '@/components/sidebar/SidebarLink.vue'
-import { DashboardIcon } from '@/components/icons/outline'
-import { CategoryIcon } from '@/components/icons/outline'
+import { DashboardIcon, AdminIcon, CategoryIcon } from '@/components/icons/outline'
 import { ShieldCheckIcon, DocumentIcon } from '@heroicons/vue/outline'
 import SidebarCollapsible from '@/components/sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/components/sidebar/SidebarCollapsibleItem.vue'

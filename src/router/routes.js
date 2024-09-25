@@ -19,6 +19,11 @@ export default [
         component: () => import('@/views/Category.vue'),
       },
       {
+        path: '/admin',
+        name: 'Admin',
+        component: () => import('@/views/Admin.vue'),
+      },
+      {
         path: '/pages/blank',
         name: 'Blank',
         component: () => import('@/views/pages/Blank.vue'),
