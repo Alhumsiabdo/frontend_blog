@@ -45,6 +45,7 @@
                     <div class="mb-4">
                         <label for="name" class="block text-gray-700">Name :</label>
                         <input type="text" id="name" v-model="newCategory.name" class="input">
+                        <p v-if="errors.name" class="text-red-500 text-xs">{{ errors.name[0] }}</p> <!-- Show error -->
                     </div>
                     <div class="flex justify-end">
                         <button type="button" class="btn btn-danger mr-2" @click="closeAddModal">Cancel</button>
@@ -62,6 +63,7 @@
                     <div class="mb-4">
                         <label for="editName" class="block text-gray-700">Name :</label>
                         <input type="text" id="editName" v-model="currentCategory.name" class="input">
+                        <p v-if="errors.name" class="text-red-500 text-xs">{{ errors.name[0] }}</p> <!-- Show error -->
                     </div>
                     <div class="flex justify-end">
                         <button type="button" class="btn btn-danger mr-2" @click="closeEditModal">Cancel</button>
@@ -98,6 +100,11 @@ const showDeleteModal = ref(false)
 const newCategory = ref({ name: '' })
 const currentCategory = ref({ id: '', name: '' })
 const categoryToDelete = ref(null)
+const errors = ref({
+    name: null,
+    email: null,
+    password: null,
+});
 
 // Fetch categories from the API
 const fetchCategories = async () => {
@@ -108,7 +115,7 @@ const fetchCategories = async () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        categories.value = response.data.data
+        categories.value = response.data.data.data
     } catch (error) {
         toastr.error('Failed to load categories.')
         console.error('Error fetching categories:', error)
@@ -117,6 +124,7 @@ const fetchCategories = async () => {
 
 // Add new category
 const addCategory = async () => {
+    errors.value = { name: null, email: null, password: null };
     try {
         const token = localStorage.getItem('token')
         const response = await axios.post('http://127.0.0.1:8000/api/auth/category/create', newCategory.value, {
@@ -129,16 +137,21 @@ const addCategory = async () => {
         closeAddModal()
         fetchCategories()
     } catch (error) {
-        toastr.error('Failed to add category.')
-        console.error('Error adding category:', error)
+        if (error.response && error.response.data.errors) {
+            errors.value = error.response.data.errors; // Capture validation errors
+        } else {
+            toastr.error('Failed to add admin.');
+        }
+        console.error('Error adding admin:', error);
     }
 }
 
 // Update existing category
 const updateCategory = async () => {
+    errors.value = { name: null, email: null, password: null };
     try {
         const token = localStorage.getItem('token')
-        const response = await axios.put(`http://127.0.0.1:8000/api/auth/category/edit/${currentCategory.value.id}`, currentCategory.value, {
+        const response = await axios.post(`http://127.0.0.1:8000/api/auth/category/edit/${currentCategory.value.id}`, currentCategory.value, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -151,8 +164,12 @@ const updateCategory = async () => {
         closeEditModal()
         fetchCategories()
     } catch (error) {
-        toastr.error('Failed to update category.')
-        console.error('Error updating category:', error)
+        if (error.response && error.response.data.errors) {
+            errors.value = error.response.data.errors; // Capture validation errors
+        } else {
+            toastr.error('Failed to add admin.');
+        }
+        console.error('Error adding admin:', error);
     }
 }
 
